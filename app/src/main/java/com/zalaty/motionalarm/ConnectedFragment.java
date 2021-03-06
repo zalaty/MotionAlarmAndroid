@@ -64,7 +64,7 @@ public class ConnectedFragment extends Fragment {
         mBTArrayAdapter = viewModel.getmBTArrayAdapter();
         discover();
 
-/*        mHandler = new Handler(Looper.getMainLooper()){
+        mHandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg){
                 if(msg.what == MESSAGE_READ){
@@ -89,7 +89,7 @@ public class ConnectedFragment extends Fragment {
                         tvStatus.setText("Connection Failed");
                 }
             }
-        };*/
+        };
 
     }
 
@@ -110,7 +110,7 @@ public class ConnectedFragment extends Fragment {
         btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //sendString("1");
+                sendString("1");
             }
         });
 
@@ -165,7 +165,7 @@ public class ConnectedFragment extends Fragment {
                         }
                     }
 
-                    ((MainActivity) getActivity()).findViewById(R.id.txAlarm).setEnabled(true);
+                    //((MainActivity) getActivity()).findViewById(R.id.txAlarm).setEnabled(true);
 
                     if(!fail) {
                         mConnectedThread = new ConnectedThread(mBTSocket, mHandler);
@@ -219,10 +219,10 @@ public class ConnectedFragment extends Fragment {
         }
     }
 
-/*    private void sendString(String sendString){
+    private void sendString(String sendString){
         if(mConnectedThread != null) //First check to make sure thread created
             mConnectedThread.write(sendString);
-    }*/
+    }
 
 
 }

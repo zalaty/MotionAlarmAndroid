@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),R.string.Bluetooth_is_already_on, Toast.LENGTH_SHORT).show();
         }
         mBTArrayAdapter.clear();
-        //enableButton(true);
-        btScanFragment.setEnabled(true);
+        enableButton(true);
+        //btScanFragment.setEnabled(true);
     }
 
     private void bluetoothOff(){
