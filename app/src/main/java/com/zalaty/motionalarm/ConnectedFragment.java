@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +48,9 @@ public class ConnectedFragment extends Fragment {
     private ConnectedThread mConnectedThread;
     private BluetoothSocket mBTSocket = null;
 
+    RelativeLayout currentLayout;
+    ToneGenerator toneG;
+    AlarmThread mAlarmThread;
 
     private final String TAG = ConnectedFragment.class.getSimpleName();
     private final static int CONNECTING_STATUS = 3;
@@ -58,6 +64,8 @@ public class ConnectedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
 
         viewModel = ViewModelProviders.of(getActivity()).get(BluetoothViewModel.class);
         mBTAdapter = viewModel.getmBTAdapter();
@@ -74,10 +82,44 @@ public class ConnectedFragment extends Fragment {
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-                    tvBuffer.setText(readMessage);
 
-                    if(readMessage == "2"){
-                        tvBuffer.setText("2");
+                    //tvBuffer.setText(readMessage);
+                    //mAlarmThread = new AlarmThread(currentLayout);
+
+                    if(readMessage.contains("1")){
+                        tvBuffer.setText("ALARM");
+
+                        currentLayout.setBackgroundColor(getResources().getColor(R.color.colorRed));
+                        //toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
+                        //toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
+                        //toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
+                        //mAlarmThread.run();
+
+                            try {
+                                for (int i = 0; i <= 10; i++) {
+                                    toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
+                                }
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+/*                        try {
+                            currentLayout.setBackgroundColor(getResources().getColor(R.color.colorRed));
+                            wait(500);
+                            currentLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }*/
+
+
+                    }else{
+                        tvBuffer.setText("");
+                        //mAlarmThread.setWhite();
+                        //mAlarmThread = null;
+                        currentLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                     }
 
                 }
@@ -113,6 +155,8 @@ public class ConnectedFragment extends Fragment {
                 sendString("1");
             }
         });
+
+        currentLayout = (RelativeLayout) view.findViewById(R.id.rl_layout);
 
         return view;
     }
@@ -164,8 +208,6 @@ public class ConnectedFragment extends Fragment {
                             Toast.makeText(getActivity(), "Socket creation failed", Toast.LENGTH_SHORT).show();
                         }
                     }
-
-                    //((MainActivity) getActivity()).findViewById(R.id.txAlarm).setEnabled(true);
 
                     if(!fail) {
                         mConnectedThread = new ConnectedThread(mBTSocket, mHandler);

@@ -6,6 +6,8 @@
     tools:context=".ConnectedFragment">
 
     <RelativeLayout
+        android:id="@+id/rl_layout"
+        android:background="@color/colorWhite"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

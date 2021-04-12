@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         btScanFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //mBTAdapter.cancelDiscovery();
+                //mBTArrayAdapter.clear();
+
                 viewModel.setmBTAdapter(mBTAdapter);
                 viewModel.setmBTArrayAdapter(mBTArrayAdapter);
                 loadFragment(new ConnectedFragment());
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         btAlarmFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragment(new AlarmFragment());
+                //loadFragment(new AlarmFragment_borrar());
             }
         });
 
