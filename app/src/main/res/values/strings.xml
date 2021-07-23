@@ -8,9 +8,17 @@
     <string name="Bluetooth_is_already_on">Bluetooth is already on</string>
     <string name="Bluetooth_turned_Off">Bluetooth turned Off</string>
     <string name="bluetooth_devices">Bluetooth Devices:</string>
+    <string name="bluetooth_not_on">Bluetooth not on</string>
     <string name="connecting">Connecting...</string>
+    <string name="connected_to_device">Connected to Device: </string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="socket_creation_failed">Socket creation failed</string>
+    <string name="discovery_started">Discovery started</string>
+    <string name="discovery_stopped">Discovery stopped</string>
     <string name="scan">Scan</string>
-    <string name="alarm">Alarm</string>
+    <string name="alarm">ALARM</string>
+    <string name="activate">ACTIVATE</string>
+    <string name="ready">READY</string>
     <string name="david">David Salado Fornell</string>
     <string name="version">V1.0</string>
 </resources>
