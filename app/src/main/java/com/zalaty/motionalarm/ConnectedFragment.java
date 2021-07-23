@@ -50,7 +50,6 @@ public class ConnectedFragment extends Fragment {
 
     RelativeLayout currentLayout;
     ToneGenerator toneG;
-    AlarmThread mAlarmThread;
 
     private final String TAG = ConnectedFragment.class.getSimpleName();
     private final static int CONNECTING_STATUS = 3;
@@ -83,42 +82,16 @@ public class ConnectedFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    //tvBuffer.setText(readMessage);
-                    //mAlarmThread = new AlarmThread(currentLayout);
-
                     if(readMessage.contains("1")){
-                        tvBuffer.setText("ALARM");
+                        tvBuffer.setText(R.string.alarm);
 
                         currentLayout.setBackgroundColor(getResources().getColor(R.color.colorRed));
-                        //toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
-                        //toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
-                        //toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
-                        //mAlarmThread.run();
-
-                            try {
-                                for (int i = 0; i <= 10; i++) {
-                                    toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
-                                }
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-
-
-/*                        try {
-                            currentLayout.setBackgroundColor(getResources().getColor(R.color.colorRed));
-                            wait(500);
-                            currentLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }*/
-
+                        toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
+                        toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
+                        toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
 
                     }else{
-                        tvBuffer.setText("");
-                        //mAlarmThread.setWhite();
-                        //mAlarmThread = null;
+                        tvBuffer.setText(R.string.ready);
                         currentLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                     }
 
@@ -126,9 +99,9 @@ public class ConnectedFragment extends Fragment {
 
                 if(msg.what == CONNECTING_STATUS){
                     if(msg.arg1 == 1)
-                        tvStatus.setText("Connected to Device: " + msg.obj);
+                        tvStatus.setText(R.string.connected_to_device + " " + msg.obj);
                     else
-                        tvStatus.setText("Connection Failed");
+                        tvStatus.setText(R.string.connection_failed);
                 }
             }
         };
@@ -152,10 +125,12 @@ public class ConnectedFragment extends Fragment {
         btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // si esta conectado, en lugar de enviar un 1, debe enviar otro digito, para que arduino interprete que se apaga la alarma
+
                 sendString("1");
             }
         });
-
+        btSend.setEnabled(false);
         currentLayout = (RelativeLayout) view.findViewById(R.id.rl_layout);
 
         return view;
@@ -166,7 +141,8 @@ public class ConnectedFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             if(!mBTAdapter.isEnabled()) {
-                Toast.makeText(getActivity(), "Bluetooth not on", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "Bluetooth not on", Toast.LENGTH_SHORT).show();
+                tvStatus.setText(R.string.bluetooth_not_on);
                 return;
             }
 
@@ -176,9 +152,9 @@ public class ConnectedFragment extends Fragment {
             final String address = info.substring(info.length() - 17);
             final String name = info.substring(0,info.length() - 17);
 
+            btSend.setEnabled(true);
 
             viewModel.setmHandler(mHandler);
-            // ESTO DE ABAJO PUEDE IR EN EL OTRO FRAGMENTO??
             // Spawn a new thread to avoid blocking the GUI one
             new Thread()
             {
@@ -190,9 +166,12 @@ public class ConnectedFragment extends Fragment {
 
                     try {
                         mBTSocket = createBluetoothSocket(device);
+                        //btSend.setEnabled(true);
                     } catch (IOException e) {
                         fail = true;
-                        Toast.makeText(getActivity(), "Socket creation failed", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "Socket creation failed", Toast.LENGTH_SHORT).show();
+                        tvStatus.setText(R.string.socket_creation_failed);
+                        //btSend.setEnabled(false);
                     }
                     // Establish the Bluetooth socket connection.
                     try {
@@ -205,7 +184,8 @@ public class ConnectedFragment extends Fragment {
                                     .sendToTarget();
                         } catch (IOException e2) {
                             //insert code to deal with this
-                            Toast.makeText(getActivity(), "Socket creation failed", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getActivity(), "Socket creation failed", Toast.LENGTH_SHORT).show();
+                            tvStatus.setText(R.string.socket_creation_failed);
                         }
                     }
 
@@ -224,9 +204,11 @@ public class ConnectedFragment extends Fragment {
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         try {
             final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
+            //btSend.setEnabled(true);
             return (BluetoothSocket) m.invoke(device, BT_MODULE_UUID);
         } catch (Exception e) {
             Log.e(TAG, "Could not create Insecure RFComm Connection",e);
+            //btSend.setEnabled(false);
         }
         return  device.createRfcommSocketToServiceRecord(BT_MODULE_UUID);
     }
@@ -247,16 +229,20 @@ public class ConnectedFragment extends Fragment {
         if(mBTAdapter.isDiscovering()){
             mBTAdapter.cancelDiscovery();
             Toast.makeText(getActivity(),"Discovery stopped",Toast.LENGTH_SHORT).show();
+            //tvStatus.setText(R.string.discovery_stopped);
         }
         else{
             if(mBTAdapter.isEnabled()) {
                 mBTArrayAdapter.clear(); // clear items
                 mBTAdapter.startDiscovery();
                 Toast.makeText(getActivity(), "Discovery started", Toast.LENGTH_SHORT).show();
+                //tvStatus.setText(R.string.discovery_started);
                 getActivity().registerReceiver(blReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
             }
             else{
                 Toast.makeText(getActivity(), "Bluetooth not on", Toast.LENGTH_SHORT).show();
+                //tvStatus.setText(R.string.bluetooth_not_on);
+                btSend.setEnabled(false);
             }
         }
     }
@@ -265,6 +251,4 @@ public class ConnectedFragment extends Fragment {
         if(mConnectedThread != null) //First check to make sure thread created
             mConnectedThread.write(sendString);
     }
-
-
 }

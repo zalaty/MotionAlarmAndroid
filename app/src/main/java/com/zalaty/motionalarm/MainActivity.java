@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> mBTArrayAdapter;
 
 
-    Button btScanFragment, btAlarmFragment;
+    Button btScanFragment;
     Button btBluetooth;
     TextView tvBluetooth;
     BluetoothViewModel viewModel;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btScanFragment = (Button) findViewById(R.id.btScanFragment);
-        btAlarmFragment = (Button) findViewById(R.id.btAlarmFragment);
+        //btAlarmFragment = (Button) findViewById(R.id.btAlarmFragment);
         btBluetooth = (Button) findViewById(R.id.btBluetooth);
         tvBluetooth = (TextView)findViewById(R.id.tvBluetooth);
 
@@ -75,12 +75,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btAlarmFragment.setOnClickListener(new View.OnClickListener() {
+/*        btAlarmFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //loadFragment(new AlarmFragment_borrar());
             }
-        });
+        });*/
 
     }
 
@@ -106,20 +106,20 @@ public class MainActivity extends AppCompatActivity {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             tvBluetooth.setText(R.string.bluetooth_enable);
-            Toast.makeText(getApplicationContext(),R.string.Bluetooth_turned_on,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),R.string.Bluetooth_turned_on,Toast.LENGTH_SHORT).show();
         }
         else{
-            Toast.makeText(getApplicationContext(),R.string.Bluetooth_is_already_on, Toast.LENGTH_SHORT).show();
+            tvBluetooth.setText(R.string.bluetooth_enable);
+            //Toast.makeText(getApplicationContext(),R.string.Bluetooth_is_already_on, Toast.LENGTH_SHORT).show();
         }
         mBTArrayAdapter.clear();
         enableButton(true);
-        //btScanFragment.setEnabled(true);
     }
 
     private void bluetoothOff(){
         mBTAdapter.disable();
         tvBluetooth.setText(R.string.bluetooth_disabled);
-        Toast.makeText(getApplicationContext(),R.string.Bluetooth_turned_Off, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),R.string.Bluetooth_turned_Off, Toast.LENGTH_SHORT).show();
         mBTAdapter.cancelDiscovery();
         mBTArrayAdapter.clear();
         enableButton(false);
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void enableButton(boolean enableButton){
         btScanFragment.setEnabled(enableButton);
-        btAlarmFragment.setEnabled(enableButton);
+        //btAlarmFragment.setEnabled(enableButton);
     }
 
 }
